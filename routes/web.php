@@ -69,3 +69,8 @@ Route::get('/supportpolicy',  [HomeController::class,'supportpolicy'])->name('su
 
 
 Route::get('/search', [HomeController::class,'search'])->name('search');
+Route::post('/product/variant_price',  [HomeController::class,'variant_price'])->name('products.variant_price');
+
+
+/*SEARCH*/
+Route::post('/ajax-search', [HomeController::class,'ajax_search'])->name('search.ajax');

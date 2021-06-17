@@ -54,16 +54,22 @@
                                         <div class="aiz-range-slider">
                                             <div
                                                 id="input-slider-range"
-                                                data-range-value-min="0"
-                                                data-range-value-max="11"
-                                                class=""
+                                                data-range-value-min="{{$preciominimo}}"
+                                                data-range-value-max="{{$preciomaximo+0.99}}"
+                                              
                                             ></div>
 
                                             <div class="row mt-2">
                                                 <div class="col-6">
                                                     <span class="range-slider-value value-low fs-14 fw-600 opacity-70"
                                                         
-                                                            data-range-value-low="0"
+                                                    @if (isset($min_price))
+                                                        data-range-value-low="{{ $min_price }}"
+                                                    @elseif( "{{$preciominimo  > 0 }}" )
+                                                        data-range-value-low="{{$preciominimo}}"
+                                                    @else
+                                                        data-range-value-low="0"
+                                                    @endif
                                                       
                                                         id="input-slider-range-value-low"
                                                     ></span>
@@ -71,7 +77,13 @@
                                                 <div class="col-6 text-right">
                                                     <span class="range-slider-value value-high fs-14 fw-600 opacity-70"
                                                       
-                                                            data-range-value-high="0"
+                                                    @if (isset($max_price))
+                                                        data-range-value-high="{{ $max_price }}"
+                                                    @elseif("{{$preciomaximo  > 0 }}")
+                                                        data-range-value-high="{{$preciomaximo + 0.99 }}"
+                                                    @else
+                                                        data-range-value-high="0"
+                                                    @endif
                                                        
                                                         id="input-slider-range-value-high"
                                                     ></span>
@@ -114,7 +126,7 @@
                                         @if(isset($productos_categoriasid))
                                             {{ \App\Category::where('productos_categoriasid',$productos_categoriasid)->first()->descripcion }}
                                         @elseif(isset($query))
-                                         Buscar resultados por "query"
+                                            Buscar Resultados por "{{ $query }}"
                                         @else
                                             Todos los productos
                                         @endif

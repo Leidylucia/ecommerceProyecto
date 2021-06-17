@@ -9250,11 +9250,11 @@ div.footable-loader>span.fooicon:after {
 /*range slider - no ui slider*/
 
 .aiz-range-slider .noUi-connect {
-    background: red;
+    background: var(--primary)
 }
 
 .aiz-range-slider .noUi-target {
-    border-color: blue;
+    border-color: var(--soft-secondary)
 }
 
 

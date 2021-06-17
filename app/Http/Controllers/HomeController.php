@@ -66,9 +66,10 @@ class HomeController extends Controller
         $imagenProducto =  ProductImagen::select('productos_imagenes.imagen')
                                         ->join('productos','productos.productosid','=','productos_imagenes.productosid')
                                         ->where('productos.productosid','=',$productosid)
-                                        ->get();   
+                                        ->get();
+        $min_qty = 1;
 
-        return view('frontend.product_details',compact('detallesProducto','precioProducto','imagenProducto'));
+        return view('frontend.product_details',compact('detallesProducto','precioProducto','imagenProducto','min_qty'));
     }
     public function terms(){
         return view("frontend.policies.terms");
@@ -88,50 +89,136 @@ class HomeController extends Controller
     public function listingByCategory(Request $request,$productos_categoriasid)
     {
         $category = Category::where('productos_categoriasid', $productos_categoriasid)->first();
+        
 
         if ($category != null) {
-            return $this->search($request,$category->productos_categoriasid);
+            return $this->search($request,$productos_categoriasid);
         }
         abort(404);
     }
-    public function search(Request $request,$productos_categoriasid = null)
+    public function search(Request $request,$productos_categoriasid = null )
     {
         $query = $request->q;
         $min_price = $request->min_price;
         $max_price = $request->max_price;
-        
-        $products= Product::select('productos.productosid','productos.descripcion','productos_tarifas.precio','productos_imagenes.imagen')
-        ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
-        ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
-        ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
-        ->where('productos_tarifas.tarifasid','=','1')
-        ->where('productos_imagenes.principal','=','1')
-        ->get();
-
 
         if($productos_categoriasid!= null){
-            $products = Product::select('productos.productosid','productos.descripcion','productos_tarifas.precio','productos_imagenes.imagen','productos_categorias.descripcion')
-                        ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
-                        ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
-                        ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
-                        ->join('productos_categorias','productos_categorias.productos_categoriasid','=','productos.productos_categoriasid')
-                        ->where('productos.productos_categoriasid','=',$productos_categoriasid)
-                        ->where('productos_tarifas.tarifasid','=','1')
-                        ->where('productos_imagenes.principal','=','1')
-                        ->get();
+            $preciomaximo = Product::select('productos_tarifas.precio')
+                ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
+                ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
+                ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
+                ->where('productos.productos_categoriasid','=',$productos_categoriasid)
+                ->where('productos_tarifas.tarifasid','=','1')
+                ->max('productos_tarifas.precio');
+            $preciominimo = Product::select('productos_tarifas.precio')
+                ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
+                ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
+                ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
+                ->where('productos.productos_categoriasid','=',$productos_categoriasid)
+                ->where('productos_tarifas.tarifasid','=','1')
+                ->min('productos_tarifas.precio');
+
+            $products = Product::select('productos.productosid','productos.descripcion','productos_tarifas.precio','productos_imagenes.imagen')
+                ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
+                ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
+                ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
+                ->join('productos_categorias','productos_categorias.productos_categoriasid','=','productos.productos_categoriasid')
+                ->where('productos.productos_categoriasid','=',$productos_categoriasid)
+                ->where('productos_tarifas.tarifasid','=','1')
+                ->where('productos_imagenes.principal','=','1')
+                ->get();
+            
+        }else{
+            $preciomaximo = ProductTarifa::where('precio','>=','0')->max('precio');
+            $preciominimo = ProductTarifa::where('precio','>=','0')->min('precio');
+            $products= Product::select('productos.productosid','productos.descripcion','productos_tarifas.precio','productos_imagenes.imagen')
+            ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
+            ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
+            ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
+            ->where('productos_tarifas.tarifasid','=','1')
+            ->where('productos_imagenes.principal','=','1')
+            ->get();
         }
 
-        if($min_price != null && $max_price != null){
-            $products = $products->where('productos_tarifas.precio', '>=', $min_price)->where('productos_tarifas.precio', '<=', $max_price);
+        if($min_price != null && $max_price != null && $productos_categoriasid!= null ){
+            $products =         Product::select('productos.productosid','productos.descripcion','productos_tarifas.precio','productos_imagenes.imagen')
+                                ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
+                                ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
+                                ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
+                                ->join('productos_categorias','productos_categorias.productos_categoriasid','=','productos.productos_categoriasid')
+                                ->where('productos.productos_categoriasid','=',$productos_categoriasid)
+                                ->where('productos_tarifas.tarifasid','=','1')
+                                ->where('productos_imagenes.principal','=','1')
+                                ->where('productos_tarifas.precio', '>=', $min_price)
+                                ->where('productos_tarifas.precio', '<=', $max_price)
+                                ->get();
+        }elseif($min_price != null && $max_price != null){
+            $products =         Product::select('productos.productosid','productos.descripcion','productos_tarifas.precio','productos_imagenes.imagen')
+                                ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
+                                ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
+                                ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
+                                ->where('productos_tarifas.tarifasid','=','1')
+                                ->where('productos_imagenes.principal','=','1')
+                                ->where('productos_tarifas.precio', '>=', $min_price)
+                                ->where('productos_tarifas.precio', '<=', $max_price)
+                                ->get();
+
+
         }
 
         if($query != null){
-           
-            $products = $products->where('productos_tarifas.precio', 'like', '%'.$query.'%');
+            $products = Product::select('productos.productosid','productos.descripcion','productos_tarifas.precio','productos_imagenes.imagen')
+                        ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
+                        ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
+                        ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
+                        ->where('productos_tarifas.tarifasid','=','1')
+                        ->where('productos_imagenes.principal','=','1')
+                        ->where('productos.descripcion', 'like', '%'.$query.'%')
+                        ->get();
         }
 
+        return view('frontend.product_listing', compact('products','query','productos_categoriasid','min_price', 'max_price','preciomaximo','preciominimo'));
+    }
+    public function variant_price(Request $request)
+    {
+       
+        $quantity = 0;
+       
+        $product_stock = Product::select('existenciastotales')->where('productosid',$request->productosid)->first();
+        $price = Product::select('productos_tarifas.precio')
+                        ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
+                        ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
+                        ->where('productos_tarifas.tarifasid','=','1')
+                        ->where('productosid',$request->productosid)
+                        ->get(); ;
 
-        return view('frontend.product_listing', compact('products','productos_categoriasid','min_price', 'max_price'));
+        $quantity = $product_stock;
+
+        return array('price' => ($price*$request->quantity), 'quantity' => $quantity);
     }
 
+    public function ajax_search(Request $request)
+    {
+        $keywords = array();
+        $products = Product::get();
+        
+
+        $products = Product::select('productos.productosid','productos.descripcion','productos_tarifas.precio','productos_imagenes.imagen')
+                    ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
+                    ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
+                    ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
+                    ->where('productos_tarifas.tarifasid','=','1')
+                    ->where('productos_imagenes.principal','=','1')
+                    ->where('productos.descripcion', 'like', '%'.$request->search.'%')
+                    ->get()
+                    ->take(5);
+
+        $categories = Category::where('descripcion', 'like', '%'.$request->search.'%')->get()->take(5);
+
+        if(sizeof($categories)>0 || sizeof($products)>0){
+            return view('frontend.partials.search_content', compact('products', 'categories'));
+        }
+        return '0';
+    }
+    
 }

@@ -77,7 +77,7 @@
                                     <div class="col-sm-10">
                                         <div class="fs-20 opacity-60">
                                             <del>
-                                                {{$precioProducto->precio}}
+                                                $ {{round(($precioProducto->precio),2)}}
                                                 <span>/Unidad</span>
                                              
                                             </del>
@@ -92,7 +92,7 @@
                                     <div class="col-sm-10">
                                         <div class="">
                                             <strong class="h2 fw-600 text-primary">
-                                                {{$precioProducto->precio}}
+                                                $ {{round(($precioProducto->precio),2)}}
                                             </strong>
                                            
                                                 <span class="opacity-70">/unidad</span>
@@ -132,7 +132,7 @@
                                                 <button class="btn col-auto btn-icon btn-sm btn-circle btn-light" type="button" data-type="minus" data-field="quantity" disabled="">
                                                     <i class="las la-minus"></i>
                                                 </button>
-                                                <input type="number" name="quantity" class="col border-0 text-center flex-grow-1 fs-16 input-number" placeholder="1" value="" min="" max="10">
+                                                <input type="number" name="quantity" class="col border-0 text-center flex-grow-1 fs-16 input-number" placeholder="1" value="{{$min_qty}}" min="{{$min_qty}}" max="10">
                                                 <button class="btn  col-auto btn-icon btn-sm btn-circle btn-light" type="button" data-type="plus" data-field="quantity">
                                                     <i class="las la-plus"></i>
                                                 </button>
@@ -155,7 +155,7 @@
                                     <div class="col-sm-10">
                                         <div class="product-price">
                                             <strong id="chosen_price" class="h4 fw-600 text-primary">
-
+                                                    
                                             </strong>
                                         </div>
                                     </div>
@@ -174,9 +174,6 @@
                                     </button>
                             
                             </div>
-
-
-
                             <div class="d-table width-100 mt-3">
                                 <div class="d-table-cell">
                                     <!-- Add to wishlist button -->
@@ -546,6 +543,12 @@
 
 @section('script')
     <script type="text/javascript">
+
+    $(document).ready(function() {
+        
+        
+    });
+
      AIZ.plugins.slickCarousel();
      AIZ.plugins.zoom();
         

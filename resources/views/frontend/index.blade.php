@@ -169,7 +169,7 @@
                          <h3 class="h5 fw-700 mb-0">
                              <span class="border-bottom border-primary border-width-2 pb-3 d-inline-block">Top 10 Categorías</span>
                          </h3>
-                         <a href="{{ route('categories.all') }}" class="ml-auto mr-0 btn btn-primary btn-sm shadow-md">Ver todas las categorías</a>
+                         <a href="{{ route('search') }}" class="ml-auto mr-0 btn btn-primary btn-sm shadow-md">Ver todas las categorías</a>
                      </div>
                     <div class="row gutters-5">
                         <div class="col-sm-3">
