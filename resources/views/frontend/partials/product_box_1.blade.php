@@ -11,9 +11,6 @@
             <a href="javascript:void(0)" onclick="" data-toggle="tooltip" data-title="" data-placement="left">
                 <i class="la la-heart-o"></i>
             </a>
-            <a href="javascript:void(0)" onclick="" data-toggle="tooltip" data-title="" data-placement="left">
-                <i class="las la-sync"></i>
-            </a>
             <a href="javascript:void(0)" onclick="showAddToCartModal({{ $product->productosid}})" data-toggle="tooltip" data-title="" data-placement="left">
                 <i class="las la-shopping-cart"></i>
             </a>

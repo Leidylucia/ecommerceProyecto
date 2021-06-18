@@ -47,7 +47,7 @@
                                     </form>
                                 </div>
                                 <div class="text-center">
-                                    <p class="text-muted mb-0">Aun no tienes una cuenta?</p>
+                                    <p class="text-muted mb-0">¿No tienes una cuenta?</p>
                                     <a href="">Registrarse ahora</a>
                                 </div>
                             </div>

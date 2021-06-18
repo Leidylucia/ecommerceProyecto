@@ -102,13 +102,38 @@
                                 </div>
                        
                            
-                                <div class="row no-gutters mt-4">
+                                <div class="row no-gutters mt-2">
                                     <div class="col-sm-2">
-                                        <div class="opacity-50 my-2">Puntos:</div>
+                                        <div class="opacity-50 my-2">Medidas:</div>
                                     </div>
-                                    <div class="col-sm-10">
-                                        <div class="d-inline-block rounded px-2 bg-soft-primary border-soft-primary border">
-                                            <span class="strong-700">5</span>
+                                   <div class="col-sm-10 d-none d-md-inline-block">
+                                        <button type="button" class="btn btn-soft-primary mr-2 fw-500" onclick="">
+                                             Medida 1
+                                        </button>
+                                        <button type="button" class="btn btn-soft-primary mr-2 fw-500" onclick="">
+                                            Medida 2
+                                        </button>
+                                        <button type="button" class="btn  btn-soft-primary mr-2 fw-500" onclick="">
+                                            Medida 3
+                                        </button> 
+                                    </div>
+                                    <div class="container d-inline-block d-md-none" >
+                                        <div class="row">
+                                          <div class="col-sm-12 mb-1 ml-3">
+                                            <button type="button" class="btn btn-soft-primary fw-500" onclick="">
+                                                Medida 1
+                                           </button>
+                                          </div>
+                                          <div class="col-sm-12 mb-1 ml-3">
+                                            <button type="button" class="btn btn-soft-primary fw-500" onclick="">
+                                                Medida 2
+                                            </button>
+                                          </div>
+                                          <div class="col-sm-12 mb-1 ml-3">
+                                            <button type="button" class="btn btn-soft-primary fw-500" onclick="">
+                                                Medida 3
+                                           </button> 
+                                          </div>
                                         </div>
                                     </div>
                                 </div>
@@ -118,7 +143,7 @@
 
                             <form id="option-choice-form">
                                 @csrf
-                                <input type="hidden" name="id" value="">
+                                <input type="hidden" name="id" value="{{$detallesProducto->productosid}}">
 
                                 
                                <!-- Quantity + Add to cart -->
@@ -148,14 +173,14 @@
 
                                 <hr>
 
-                                <div class="row no-gutters pb-3 d-none" id="chosen_price_div">
+                                <div class="row no-gutters pb-3 d-none " id="chosen_price_div">
                                     <div class="col-sm-2">
                                         <div class="opacity-50 my-2">Precio Total:</div>
                                     </div>
                                     <div class="col-sm-10">
                                         <div class="product-price">
                                             <strong id="chosen_price" class="h4 fw-600 text-primary">
-                                                    
+                                              
                                             </strong>
                                         </div>
                                     </div>
@@ -194,7 +219,6 @@
                 <div class="col-xl-3 order-1 order-xl-0">
                     <div class="bg-white shadow-sm mb-3">
                         <div class="position-relative p-3 text-left">
-                           
                                 <div class="absolute-top-right p-2 bg-white z-1">
                                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 287.5 442.2" width="22" height="34">
                                         <polygon style="fill:#F8B517;" points="223.4,442.2 143.8,376.7 64.1,442.2 64.1,215.3 223.4,215.3 "/>
@@ -210,9 +234,6 @@
 
                                 </a>
                                 <div class="location opacity-70">Direccion</div>
-                     
-                           
-                            
 
                             <div class="text-center border rounded p-2 mt-3">
                                 <div class="rating">
@@ -337,9 +358,7 @@
                                             </li>
                                          
                                     </ul>
-
-                                    
-                                            <div class="pt-4">
+                                        <div class="pt-4">
                                                 <div class="border-bottom mb-4">
                                                     <h3 class="fs-17 fw-600">
                                                        Escribir una reseña
@@ -542,23 +561,61 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript">
-
+    <script>
     $(document).ready(function() {
-        
-        
+        if($('#option-choice-form input[name=quantity]').val() > 0){
+            $.ajax({
+            type:"POST",
+            url: '{{ route('products.variant_price') }}',
+            data: $('#option-choice-form').serializeArray(),
+            success: function(data){
+                $('#option-choice-form #chosen_price_div').removeClass('d-none');
+                $('#option-choice-form #chosen_price_div #chosen_price').html(data.price);
+                $('#available-quantity').html(data.quantity);
+                $('.input-number').prop('max', data.quantity);
+                if(parseInt(data.quantity) < 1){
+                    $('.buy-now').hide();
+                    $('.add-to-cart').hide();
+                }
+                else{
+                    $('.buy-now').show();
+                    $('.add-to-cart').show();
+                    }
+                }
+            });
+        }    
     });
-
-     AIZ.plugins.slickCarousel();
-     AIZ.plugins.zoom();
-        
-        function show_chat_modal(){
-            @if (Auth::check())
+    $('#option-choice-form input').on('change', function () {
+        if($('#option-choice-form input[name=quantity]').val() > 0){
+            $.ajax({
+            type:"POST",
+            url: '{{ route('products.variant_price') }}',
+            data: $('#option-choice-form').serializeArray(),
+            success: function(data){
+                $('#option-choice-form #chosen_price_div').removeClass('d-none');
+                $('#option-choice-form #chosen_price_div #chosen_price').html(data.price);
+                $('#available-quantity').html(data.quantity);
+                $('.input-number').prop('max', data.quantity);
+                if(parseInt(data.quantity) < 1){
+                    $('.buy-now').hide();
+                    $('.add-to-cart').hide();
+                }
+                else{
+                    $('.buy-now').show();
+                    $('.add-to-cart').show();
+                    }
+                }
+            });
+        }    
+    });
+     
+    function show_chat_modal(){
+    @if (Auth::check())
                 $('#chat_modal').modal('show');
             @else
                 $('#login_modal').modal('show');
             @endif
-        }
+    }
 
     </script>
 @endsection

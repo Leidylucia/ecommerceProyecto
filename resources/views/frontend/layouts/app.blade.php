@@ -181,35 +181,34 @@
 
             return false;
         }
-           
+
+        $('#option-choice-form input').on('change', function(){
+            getVariantPrice();
+        });
+
         function getVariantPrice(){
             if($('#option-choice-form input[name=quantity]').val() > 0){
                 $.ajax({
                    type:"POST",
                    url: '{{ route('products.variant_price') }}',
                    data: $('#option-choice-form').serializeArray(),
+                   
                    success: function(data){
-                        $('.product-gallery-thumb .carousel-box').each(function (i) {
-                            if($(this).data('variation') && data.variation == $(this).data('variation')){
-                                $('.product-gallery-thumb').slick('slickGoTo', i);
-                            }
-                        })
-
                        $('#option-choice-form #chosen_price_div').removeClass('d-none');
                        $('#option-choice-form #chosen_price_div #chosen_price').html(data.price);
                        $('#available-quantity').html(data.quantity);
                        $('.input-number').prop('max', data.quantity);
-                       if(parseInt(data.quantity) < 1 && data.digital  == 0){
+                       if(parseInt(data.quantity) < 1){
                            $('.buy-now').hide();
                            $('.add-to-cart').hide();
                        }
                        else{
                            $('.buy-now').show();
                            $('.add-to-cart').show();
-                       }
+                       } 
                    }
                });
-            }
+            } 
         }
 
     }

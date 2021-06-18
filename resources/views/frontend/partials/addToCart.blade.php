@@ -66,7 +66,7 @@
 
                 <form id="option-choice-form">
                     @csrf
-                    <input type="hidden" name="id" value="{{ $product->productosid }}">
+                    <input type="hidden" name="id" value="{{$product->productosid}}">
 
                     <!-- Quantity + Add to cart -->
                     <div class="row no-gutters">
@@ -89,7 +89,7 @@
                         </div>
                     </div>
 
-                    <div class="row no-gutters pb-3 d-none" id="chosen_price_div">
+                    <div class="row no-gutters pt-3 pb-3 d-none" id="chosen_price_div">
                         <div class="col-2">
                             <div class="opacity-50">Precio Total:</div>
                         </div>
@@ -101,6 +101,7 @@
                             </div>
                         </div>
                     </div>
+                    <div class="avialable-amount opacity-60">(<span id="available-quantity">{{$min_qty }}</span>  Disponible)</div>
 
                 </form> 
                 <div class="mt-3">
@@ -116,4 +117,31 @@
         </div> 
     </div>
 </div>
+<script>
+    $('#option-choice-form input').on('change', function () {
+        if($('#option-choice-form input[name=quantity]').val() > 0){
+                $.ajax({
+                   type:"POST",
+                   url: '{{ route('products.variant_price') }}',
+                   data: $('#option-choice-form').serializeArray(),
+                   
+                   success: function(data){
+                     $('#option-choice-form #chosen_price_div').removeClass('d-none');
+                       $('#option-choice-form #chosen_price_div #chosen_price').html(data.price);
+                       $('#available-quantity').html(data.quantity);
+                       $('.input-number').prop('max', data.quantity);
+                       if(parseInt(data.quantity) < 1){
+                           $('.buy-now').hide();
+                           $('.add-to-cart').hide();
+                       }
+                       else{
+                           $('.buy-now').show();
+                           $('.add-to-cart').show();
+                       } 
+                   }
+               });
+            } 
+    });
+</script>
+
 

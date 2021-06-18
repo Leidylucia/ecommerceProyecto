@@ -78,3 +78,8 @@ Route::post('/ajax-search', [HomeController::class,'ajax_search'])->name('search
 
 /* AÑADIR AL CARRITO */
 Route::post('/cart/addtocart', [HomeController::class,'addToCart'])->name('cart.addToCart');
+
+
+/* LOGIN */
+
+Route::get('/users/login', [HomeController::class,'login'])->name('user.login');

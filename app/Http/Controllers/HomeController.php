@@ -181,20 +181,15 @@ class HomeController extends Controller
     }
     public function variant_price(Request $request)
     {
-       
+    /*   
         $quantity = 0;
        
         $product_stock = Product::select('existenciastotales')->where('productosid',$request->productosid)->first();
-        $price = Product::select('productos_tarifas.precio')
-                        ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
-                        ->join('tarifas','tarifas.tarifasid','=','productos_tarifas.tarifasid')
-                        ->where('productos_tarifas.tarifasid','=','1')
-                        ->where('productosid',$request->productosid)
-                        ->get(); ;
-
-        $quantity = $product_stock;
-
-        return array('price' => ($price*$request->quantity), 'quantity' => $quantity);
+     */
+        $price = ProductTarifa::where('productosid',$request->id)->first();
+        
+        $precioT = round(($price->precio),2);
+        return array('price' => (round(($precioT*$request->quantity),2)));
     }
 
     public function ajax_search(Request $request)
@@ -220,5 +215,7 @@ class HomeController extends Controller
         }
         return 0;
     }
+
+ 
     
 }
