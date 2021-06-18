@@ -7,7 +7,6 @@
     <meta name="robots" content="index, follow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="app-url" content="http://localhost/ecommerceProyecto">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     @yield('meta')
    
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&display=swap" rel="stylesheet">
@@ -89,6 +88,29 @@
           
             
         }
+        function addToCart(){
+            if(checkAddToCartValidity()) {
+                $('#addToCart').modal();
+                $('.c-preloader').show();
+                $.ajax({
+                   type:"POST",
+                   url: '{{ route('cart.addToCart') }}',
+                   data: $('#option-choice-form').serializeArray(),
+                   success: function(data){
+                       $('#addToCart-modal-body').html(null);
+                       $('.c-preloader').hide();
+                       $('#modal-size').removeClass('modal-lg');
+                       $('#addToCart-modal-body').html(data.view);
+                       updateNavCart();
+                       $('#cart_items_sidenav').html(parseInt($('#cart_items_sidenav').html())+1);
+                   }
+               });
+            }
+            else{
+                AIZ.plugins.notify('warning', 'Please choose all the options');
+            }
+        }
+
 
         $('#search').on('keyup', function(){
             search();
@@ -106,11 +128,10 @@
                 $('.typed-search-box').removeClass('d-none');
                 $('.search-preloader').removeClass('d-none');
                 $.post('{{ route('search.ajax') }}', { _token: AIZ.data.csrf, search:searchKey}, function(data){
-                    
-                    if(data == '0'){
-                        $('.typed-search-box').addClass('d-none');
+                    console.log(data);
+                    if(data ==0){
                         $('#search-content').html(null);
-                        $('.typed-search-box .search-nothing').removeClass('d-none').html('Sorry, nothing found for <strong>"'+searchKey+'"</strong>');
+                        $('.typed-search-box .search-nothing').removeClass('d-none').html('Disculpa, no se ha podido encontrar <strong>"'+searchKey+'"</strong>');
                         $('.search-preloader').addClass('d-none');
 
                     }
@@ -127,15 +148,15 @@
             }
         }
 
-        function showAddToCartModal(id){
+        function showAddToCartModal(productosid){
             if(!$('#modal-size').hasClass('modal-lg')){
                 $('#modal-size').addClass('modal-lg');
             }
             $('#addToCart-modal-body').html(null);
             $('#addToCart').modal();
             $('.c-preloader').show();
-            $.post('{{ route('cart.showCartModal') }}', {_token: AIZ.data.csrf, id:id}, function(data){
-                console.log('aguagjsags')
+            $.post('{{ route('cart.showCartModal') }}', {_token: AIZ.data.csrf, productosid:productosid}, function(data){
+              
                 $('.c-preloader').hide();
                 $('#addToCart-modal-body').html(data);
                 AIZ.plugins.slickCarousel();
@@ -168,7 +189,6 @@
                    url: '{{ route('products.variant_price') }}',
                    data: $('#option-choice-form').serializeArray(),
                    success: function(data){
-                        console.log(data);
                         $('.product-gallery-thumb .carousel-box').each(function (i) {
                             if($(this).data('variation') && data.variation == $(this).data('variation')){
                                 $('.product-gallery-thumb').slick('slickGoTo', i);

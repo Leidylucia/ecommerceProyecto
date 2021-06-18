@@ -218,7 +218,7 @@ class HomeController extends Controller
         if(sizeof($categories)>0 || sizeof($products)>0){
             return view('frontend.partials.search_content', compact('products', 'categories'));
         }
-        return '0';
+        return 0;
     }
     
 }

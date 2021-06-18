@@ -74,3 +74,7 @@ Route::post('/product/variant_price',  [HomeController::class,'variant_price'])-
 
 /*SEARCH*/
 Route::post('/ajax-search', [HomeController::class,'ajax_search'])->name('search.ajax');
+
+
+/* AÑADIR AL CARRITO */
+Route::post('/cart/addtocart', [HomeController::class,'addToCart'])->name('cart.addToCart');
