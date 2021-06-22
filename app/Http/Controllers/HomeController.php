@@ -232,21 +232,21 @@ class HomeController extends Controller
     public function registroPost(Request $request)
     {  
         $request->validate([
-            'cedula' => 'required|string|min:10|max:13',
+            'cedula' => 'required|string|unique:users|min:10|max:13',
             'name' => 'required',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email',
             'phone' => 'required|string|min:7|max:10',
             'password' => 'required|string|min:6|max:15|confirmed',
-        ]);
+            ]
+        );
 
         $data = $request->all();
         $check = $this->create($data);
-        if($check){
-            flash('Registrado Correctamente')->success();
-            return redirect("/");
-        } else{
-            flash('Registro Incorrecto.')->error();
-        }
+
+      
+        flash('Registrado Correctamente')->success();
+         return redirect("/");
+        
        
        
     }

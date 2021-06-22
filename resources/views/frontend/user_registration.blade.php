@@ -18,8 +18,16 @@
                                         @csrf
                                        
                                         <div class="form-group">
-                                            <input type="text" class="form-control" value="" placeholder="Cédula o Ruc" name="cedula" minlength="10" maxlength="13" pattern="[0-9]+" onkeypress="return validarNumero(event)" required>
-                                       
+                                               
+                                                <input id="inputCedula" type="text" class="form-control {{ $errors->has('cedula') ? ' is-invalid' : '' }}" value="{{ old('cedula') }}" placeholder="Cédula o Ruc" name="cedula" minlength="10" maxlength="13" pattern="[0-9]+" onkeypress="return validarNumero(event)" required>
+                                                
+                                                @if ($errors->has('cedula'))
+                                               
+                                                    <span class="invalid-feedback" style="font-weight:bold;" role="alert">
+                                                        <span>La cédula o RUC ya existe</span>
+                                                    </span>
+                                                @endif
+                                             
                                         </div>
                                         <div class="form-group">
                                             <input type="text" class="form-control {{ $errors->has('name') ? ' is-invalid' : '' }}" value="{{ old('name') }}" placeholder="Nombres Completos" name="name" required>
@@ -68,7 +76,7 @@
                                         </div>
 
                                         <div class="mb-5">
-                                            <button type="submit" class="btn btn-primary btn-block fw-600">Crear Cuenta</button>
+                                            <button id="buttonCrear" type="submit" class="btn btn-primary btn-block fw-600">Crear Cuenta</button>
                                         </div>
                                     </form>
                                
@@ -91,13 +99,141 @@
 @section('script')
  
     <script type="text/javascript">
+
         function validarNumero(e) {
-        tecla = (document.all) ? e.keyCode : e.which;
-        if (tecla==8) return true; 
-        patron =/[0-9]/;
-        te = String.fromCharCode(tecla); 
-        return patron.test(te); 
-    }
-        
+            tecla = (document.all) ? e.keyCode : e.which;
+            if (tecla==8) return true; 
+            patron =/[0-9]/;
+            te = String.fromCharCode(tecla); 
+            return patron.test(te); 
+        } 
+
+        $( "#buttonCrear" ).click(function() {         
+            
+            var cad = document.getElementById("inputCedula").value.trim();
+            var total = 0;
+            var longitud = cad.length;
+            var longcheck = longitud - 1;
+            var digitos = cad.split('').map(Number);
+            var codigo_provincia = digitos[0] * 10 + digitos[1];
+            if (cad !== "" && longitud === 10){
+                
+                if ( cad != '2222222222' && codigo_provincia >= 1 && (codigo_provincia <= 24 || codigo_provincia == 30 )) 
+                {
+                    for(i = 0; i < longcheck; i++){
+                        if (i%2 === 0) {
+                        var aux = cad.charAt(i) * 2;
+                        if (aux > 9) aux -= 9;
+                        total += aux;
+                        } else {
+                        total += parseInt(cad.charAt(i)); // parseInt o concatenará en lugar de sumar
+                        }
+                    }
+                    total = total % 10 ? 10 - total % 10 : 0;
+
+                    if (cad.charAt(longitud-1) == total) {
+                      
+                    }else{
+                        event.preventDefault();
+                                
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "bottom-left",
+                            width:"350px",
+                            timer: 3000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            background:"#df4759",
+                        });
+                        Toast.fire({
+                            title: '<span style="color:#ffffff">La cédula no es válida<span>'
+                        })
+                    }
+                }else{
+                    event.preventDefault();
+                                
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "bottom-left",
+                            width:"350px",
+                            timer: 3000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            background:"#df4759",
+                        });
+                        Toast.fire({
+                            title: '<span style="color:#ffffff">La cédula no es válida<span>'
+                        })
+
+                }                    
+            }
+
+              
+
+                
+            /* var cedula = document.getElementById("inputCedula").value.trim()
+          
+            if (typeof(cedula) == 'string' && cedula.length == 10 && /^\d+$/.test(cedula)) 
+            {
+                var digitos = cedula.split('').map(Number);
+                var codigo_provincia = digitos[0] * 10 + digitos[1];
+                               
+                if (codigo_provincia >= 1 && (codigo_provincia <= 24 || codigo_provincia == 30)) 
+                {
+                    var digito_verificador = digitos.pop();
+                
+                    var digito_calculado = digitos.reduce(
+                    function (valorPrevio, valorActual, indice) 
+                    {
+                        return valorPrevio - (valorActual * (2 - indice % 2)) % 9 - (valorActual == 9) * 9;
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "bottom-left",
+                            width:"350px",
+                            timer: 3000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            background:"#df4759",
+                        });
+                        Toast.fire({
+                            title: '<span style="color:#ffffff">La cédula no es válida<span>'
+                        })
+                        event.preventDefault();
+                        
+                    }, 1000) % 10;
+                    return digito_calculado === digito_verificador;
+                        
+                }
+               
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "bottom-left",
+                    width:"350px",
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    background:"#df4759",
+                });
+                Toast.fire({
+                    title: '<span style="color:#ffffff">La cédula no es válida<span>'
+                })
+                event.preventDefault();
+                
+            }
+            const Toast = Swal.mixin({
+                    toast: true,
+                    position: "bottom-left",
+                    width:"350px",
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    background:"#df4759",
+            });
+            Toast.fire({
+                title: '<span style="color:#ffffff">La cédula no es válida<span>'
+            })
+            event.preventDefault(); */
+        });
+  
     </script>
 @endsection

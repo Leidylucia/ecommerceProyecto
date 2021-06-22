@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css') }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/custom-style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         var AIZ = AIZ || {};
@@ -134,7 +135,6 @@
                 $('.typed-search-box').removeClass('d-none');
                 $('.search-preloader').removeClass('d-none');
                 $.post('{{ route('search.ajax') }}', { _token: AIZ.data.csrf, search:searchKey}, function(data){
-                    console.log(data);
                     if(data ==0){
                         $('#search-content').html(null);
                         $('.typed-search-box .search-nothing').removeClass('d-none').html('Disculpa, no se ha podido encontrar <strong>"'+searchKey+'"</strong>');
