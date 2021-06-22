@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Auth;
 use App\Category;
 use App\Product;
 use App\ProductImagen;
 use App\ProductTarifa;
+use Illuminate\Support\Facades\Auth;
+use Session;
+use Hash;
+use App\User;
 
 class HomeController extends Controller
 {
@@ -37,23 +40,7 @@ class HomeController extends Controller
         return view('frontend.partials.best_selling_section',compact('products'));
     }
 
-    public function login()
-    {
-        if(Auth::check()){
-            return redirect()->route('home');
-        }
-        return view('frontend.user_login');
-    }
-
-    public function registration(Request $request)
-    {
-        if(Auth::check()){
-            return redirect()->route('home');
-        }
-    
-        return view('frontend.user_registration');
-    }
-    public function all_categories(Request $request)
+      public function all_categories(Request $request)
     {
         $categories = Category::get();
         return view('frontend.all_category',compact('categories'));
@@ -216,6 +203,51 @@ class HomeController extends Controller
         return 0;
     }
 
- 
+    public function login()
+    {
+        if(Auth::check()){
+            return redirect()->route('home');
+        }
+        return view('frontend.user_login');
+    }
+
+    public function registration(Request $request)
+    {
+        if(Auth::check()){
+            return redirect()->route('home');
+        }
     
+        return view('frontend.user_registration');
+    }
+    public function create(array $data)
+    {
+      return User::create([
+        'cedula' => $data['cedula'],
+        'phone' => $data['phone'],
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'password' => Hash::make($data['password'])
+      ]);
+    }
+    public function registroPost(Request $request)
+    {  
+        $request->validate([
+            'cedula' => 'required|string|min:10|max:13',
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'phone' => 'required|string|min:7|max:10',
+            'password' => 'required|string|min:6|max:15|confirmed',
+        ]);
+
+        $data = $request->all();
+        $check = $this->create($data);
+        if($check){
+            flash('Registrado Correctamente')->success();
+            return redirect("/");
+        } else{
+            flash('Registro Incorrecto.')->error();
+        }
+       
+       
+    }
 }

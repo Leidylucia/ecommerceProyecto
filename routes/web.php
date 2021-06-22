@@ -38,7 +38,7 @@ Route::get('/categories', [HomeController::class,'all_categories'])->name('categ
 /* LOGIN */
 Route::get('/users/login', [HomeController::class,'login'])->name('user.login');
 Route::get('/users/registration', [HomeController::class,'registration'])->name('user.registration');
-
+Route::post('/users/post-registration', [HomeController::class,'registroPost'])->name('register.post');
 
 /* WISHLISTS */
 
@@ -82,4 +82,5 @@ Route::post('/cart/addtocart', [HomeController::class,'addToCart'])->name('cart.
 
 /* LOGIN */
 
-Route::get('/users/login', [HomeController::class,'login'])->name('user.login');
+
+
