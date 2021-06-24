@@ -56,6 +56,32 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row no-gutters mt-2">
+                        <div class="col-sm-2">
+                            <div class="opacity-50 my-2">Medidas:</div>
+                        </div>
+                       
+                        <div class="container d-inline-block " >
+                            <div class="row">
+                              <div class="col-sm-12 mb-1 ml-5">
+                                <button type="button" class="btn btn-soft-primary fw-500" onclick="">
+                                    Medida 1
+                               </button>
+                              </div>
+                              <div class="col-sm-12 mb-1 ml-5">
+                                <button type="button" class="btn btn-soft-primary fw-500" onclick="">
+                                    Medida 2
+                                </button>
+                              </div>
+                              <div class="col-sm-12 mb-1 ml-5">
+                                <button type="button" class="btn btn-soft-primary fw-500" onclick="">
+                                    Medida 3
+                               </button> 
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+              
                
                 <hr>
 
@@ -73,7 +99,7 @@
                         <div class="col-2">
                             <div class="opacity-50 mt-2">Cantidad:</div>
                         </div>
-                        <div class="col-10">
+                        <div class="col-10 ml-3">
                             <div class="product-quantity d-flex align-items-center">
                                 <div class="row no-gutters align-items-center aiz-plus-minus mr-3" style="width: 130px;">
                                     <button class="btn col-auto btn-icon btn-sm btn-circle btn-light" type="button" data-type="minus" data-field="quantity" disabled="">

@@ -150,8 +150,9 @@
                                 </div>
                             @endforeach
                         </div>
+                       
                         <div class="aiz-pagination aiz-pagination-center mt-4">
-                          
+                            {{$products->appends(request()->input())->links('pagination::bootstrap-4')}}
                         </div>
                     </div>
                 </div>

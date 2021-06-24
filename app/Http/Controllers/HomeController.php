@@ -113,7 +113,7 @@ class HomeController extends Controller
                 ->where('productos.productos_categoriasid','=',$productos_categoriasid)
                 ->where('productos_tarifas.tarifasid','=','1')
                 ->where('productos_imagenes.principal','=','1')
-                ->get();
+                ->paginate(5);
             
         }else{
             $preciomaximo = ProductTarifa::where('precio','>=','0')->max('precio');
@@ -124,7 +124,7 @@ class HomeController extends Controller
             ->join('productos_imagenes','productos_imagenes.productosid','=','productos.productosid')
             ->where('productos_tarifas.tarifasid','=','1')
             ->where('productos_imagenes.principal','=','1')
-            ->get();
+            ->paginate(5);
         }
 
         if($min_price != null && $max_price != null && $productos_categoriasid!= null ){
@@ -138,7 +138,7 @@ class HomeController extends Controller
                                 ->where('productos_imagenes.principal','=','1')
                                 ->where('productos_tarifas.precio', '>=', $min_price)
                                 ->where('productos_tarifas.precio', '<=', $max_price)
-                                ->get();
+                                ->paginate(5);
         }elseif($min_price != null && $max_price != null){
             $products =         Product::select('productos.productosid','productos.descripcion','productos_tarifas.precio','productos_imagenes.imagen')
                                 ->join('productos_tarifas','productos_tarifas.productosid','=','productos.productosid')
@@ -148,7 +148,7 @@ class HomeController extends Controller
                                 ->where('productos_imagenes.principal','=','1')
                                 ->where('productos_tarifas.precio', '>=', $min_price)
                                 ->where('productos_tarifas.precio', '<=', $max_price)
-                                ->get();
+                                ->paginate(5);
 
 
         }
@@ -161,7 +161,7 @@ class HomeController extends Controller
                         ->where('productos_tarifas.tarifasid','=','1')
                         ->where('productos_imagenes.principal','=','1')
                         ->where('productos.descripcion', 'like', '%'.$query.'%')
-                        ->get();
+                        ->paginate(5);
         }
 
         return view('frontend.product_listing', compact('products','query','productos_categoriasid','min_price', 'max_price','preciomaximo','preciominimo'));
